@@ -52,7 +52,7 @@ var app = {
 
         function markTrainerAttendance() {
             // Training Location Coordinates
-            var trainingLoc_lat = 17.48;
+            var trainingLoc_lat = 10.48;
             var trainingLoc_lon = 78.37;
 
             var onSuccess = function(position) {
@@ -66,7 +66,7 @@ var app = {
                     'Timestamp: '         + position.timestamp                + '\n');
 
                 var difference = distanceInKmBetweenEarthCoordinates(trainingLoc_lat, trainingLoc_lon, position.coords.latitude, position.coords.longitude);
-                if(difference > 1000) {
+                if(difference > 0.5) {
                     alert('You are not in your current Training Location.');
                 }
                 else {
