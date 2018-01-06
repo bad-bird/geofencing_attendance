@@ -17,7 +17,7 @@
         </div>
         <div class="employee_module">
             <h1>Trainer</h1>
-                <button class="w3-btn w3-blue w3-round" onClick="markTrainerAttendance()">Mark Today's Attendance</button>
+                <button class="w3-btn w3-blue w3-round" id="markTrainerAttendance">Mark Today's Attendance</button>
                 <div id="trainer_attendance_calendar"></div>
 
             <h1>Packages</h1>
@@ -26,11 +26,5 @@
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
     <script type="text/javascript" src="js/caleandar.js"></script>
-    <script>
-        var monthly_attendance = [1,2,3,4];
-        var element = document.getElementById('trainer_attendance_calendar');
-        var settings = {type: 'attendance'};
-        caleandar(element, monthly_attendance, settings);
-    </script>
 </body>
 </html>
