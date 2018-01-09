@@ -24,9 +24,9 @@ var app = {
 
 
 
-        var monthly_attendance = [1,2,3,4]; //1st, 2nd, 3rd, 4th
+        var monthly_attendance = [{timestamp:'2018/1/23', details:'Details'},{timestamp:'2018/1/23', details:'Details'},{timestamp:'2018/1/21', details:'Details'}]; //1st, 2nd, 3rd, 4th
         var element = document.getElementById('trainer_attendance_calendar');
-        var settings = {type: 'attendance'};
+        var settings = {type: 'another'};
         caleandar(element, monthly_attendance, settings);
 
         document.getElementById('markTrainerAttendance').addEventListener('click', markTrainerAttendance);

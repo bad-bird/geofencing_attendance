@@ -172,6 +172,44 @@ function createCalendar(calendar, element, adjuster){
       number.innerHTML += n;
       return number;
     }
+
+    // Displaying Event Details Start - Sravya 9/1/18
+    function showEvent(e) {
+      var ele = document.getElementById('event_tooltip_'+e.target.id);
+      if(ele) {
+        $( '#event_tooltip_'+e.target.id).hide(150, function() {$( '#event_tooltip_'+e.target.id).remove()});
+      }
+      else {
+        $('.event_details_tooltip').remove();
+        var eventDiv = document.createElement('span');
+        var ul = document.createElement('ul');
+        for(var i=0;i<e.target.eventList.length;i++) {
+          var li = document.createElement('li');
+          li.innerHTML = e.target.eventList[i].details;
+          ul.appendChild(li);
+        }
+        eventDiv.appendChild(ul);
+        eventDiv.style.borderRadius = '0 5px 5px 0';
+        eventDiv.style.width = '0px';
+        eventDiv.style.height = e.path[2].offsetHeight + 'px';
+        eventDiv.style.overflow = 'auto';
+        eventDiv.style.position = 'absolute';
+        eventDiv.style.left = (e.path[2].offsetLeft + e.path[2].offsetWidth) + 'px';
+        eventDiv.style.top = (e.path[2].offsetTop) + 'px';
+        eventDiv.style.backgroundColor = '#e2e2e2';
+        eventDiv.style.transition = 'width 0.3s';
+
+        eventDiv.className = 'event_details_tooltip';
+        eventDiv.id = 'event_tooltip_'+e.target.id;
+        document.body.appendChild(eventDiv);
+        setTimeout(function() { 
+          eventDiv.style.width = '200px'; 
+        }, 5);
+
+      }
+    }
+    // Displaying Event Details End - Sravya 9/1/18
+
     var days = document.createElement('ul');
     days.className += "cld-days";
     // Previous Month's Days
@@ -203,7 +241,9 @@ function createCalendar(calendar, element, adjuster){
         }
       }
       var number = DayNumber(i+1);
-      // Check Date against Attendance Dates
+      number.id = (i+1)+'-'+ calendar.Selected.Month + '-' + calendar.Selected.Year;  // - Sravya 9/1/18
+
+      // Check Date against Attendance Dates - Sravya 9/1/18
       if(calendar.Options.type && calendar.Options.type == 'attendance') {
         day.className += " attendance";
         if(calendar.Model.indexOf(i+1) != -1) {
@@ -214,49 +254,69 @@ function createCalendar(calendar, element, adjuster){
         }
         
       }
-      else {
-        // Check Date against Event Dates
-        for(var n = 0; n < calendar.Model.length; n++){
-          var evDate = calendar.Model[n].Date;
-          var toDate = new Date(calendar.Selected.Year, calendar.Selected.Month, (i+1));
-          if(evDate.getTime() == toDate.getTime()){
-            number.className += " eventday";
-            var title = document.createElement('span');
-            title.className += "cld-title";
-            if(typeof calendar.Model[n].Link == 'function' || calendar.Options.EventClick){
-              var a = document.createElement('a');
-              a.setAttribute('href', '#');
-              a.innerHTML += calendar.Model[n].Title;
-              if(calendar.Options.EventClick){
-                var z = calendar.Model[n].Link;
-                if(typeof calendar.Model[n].Link != 'string'){
-                  a.addEventListener('click', calendar.Options.EventClick.bind.apply(calendar.Options.EventClick, [null].concat(z)) );
-                  if(calendar.Options.EventTargetWholeDay){
-                    day.className += " clickable";
-                    day.addEventListener('click', calendar.Options.EventClick.bind.apply(calendar.Options.EventClick, [null].concat(z)) );
-                  }
-                }else{
-                  a.addEventListener('click', calendar.Options.EventClick.bind(null, z) );
-                  if(calendar.Options.EventTargetWholeDay){
-                    day.className += " clickable";
-                    day.addEventListener('click', calendar.Options.EventClick.bind(null, z) );
-                  }
-                }
-              }else{
-                a.addEventListener('click', calendar.Model[n].Link);
-                if(calendar.Options.EventTargetWholeDay){
-                  day.className += " clickable";
-                  day.addEventListener('click', calendar.Model[n].Link);
-                }
-              }
-              title.appendChild(a);
-            }else{
-              title.innerHTML += '<a href="' + calendar.Model[n].Link + '">' + calendar.Model[n].Title + '</a>';
-            }
-            number.appendChild(title);
+      // Check Date against Events - Sravya 9/1/18
+      else if (calendar.Options.type && calendar.Options.type == 'another') {
+        var eventList = calendar.Model.filter(function(event, index) {
+          var date = new Date(event.timestamp);
+          return (date.getDate() == (i+1) && date.getMonth() == calendar.Selected.Month && date.getFullYear() == calendar.Selected.Year);
+        });
+        if(eventList.length > 0) {
+          number.className += ' eventNumber';
+          number.eventList = eventList;
+          number.onclick = function(e) {
+            showEvent(e);
+          }
+        }
+        else {
+          number.onclick = function(e) {
+            $('.event_details_tooltip').hide(150, function() {$('.event_details_tooltip').remove()});
           }
         }
       }
+      // Not Used - Sravya 9/1/18
+      // else {
+      //   // Check Date against Event Dates
+      //   for(var n = 0; n < calendar.Model.length; n++){
+      //     var evDate = calendar.Model[n].Date;
+      //     var toDate = new Date(calendar.Selected.Year, calendar.Selected.Month, (i+1));
+      //     if(evDate.getTime() == toDate.getTime()){
+      //       number.className += " eventday";
+      //       var title = document.createElement('span');
+      //       title.className += "cld-title";
+      //       if(typeof calendar.Model[n].Link == 'function' || calendar.Options.EventClick){
+      //         var a = document.createElement('a');
+      //         a.setAttribute('href', '#');
+      //         a.innerHTML += calendar.Model[n].Title;
+      //         if(calendar.Options.EventClick){
+      //           var z = calendar.Model[n].Link;
+      //           if(typeof calendar.Model[n].Link != 'string'){
+      //             a.addEventListener('click', calendar.Options.EventClick.bind.apply(calendar.Options.EventClick, [null].concat(z)) );
+      //             if(calendar.Options.EventTargetWholeDay){
+      //               day.className += " clickable";
+      //               day.addEventListener('click', calendar.Options.EventClick.bind.apply(calendar.Options.EventClick, [null].concat(z)) );
+      //             }
+      //           }else{
+      //             a.addEventListener('click', calendar.Options.EventClick.bind(null, z) );
+      //             if(calendar.Options.EventTargetWholeDay){
+      //               day.className += " clickable";
+      //               day.addEventListener('click', calendar.Options.EventClick.bind(null, z) );
+      //             }
+      //           }
+      //         }else{
+      //           a.addEventListener('click', calendar.Model[n].Link);
+      //           if(calendar.Options.EventTargetWholeDay){
+      //             day.className += " clickable";
+      //             day.addEventListener('click', calendar.Model[n].Link);
+      //           }
+      //         }
+      //         title.appendChild(a);
+      //       }else{
+      //         title.innerHTML += '<a href="' + calendar.Model[n].Link + '">' + calendar.Model[n].Title + '</a>';
+      //       }
+      //       number.appendChild(title);
+      //     }
+      //   }
+      // }
       
       day.appendChild(number);
       // If Today..

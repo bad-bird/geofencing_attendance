@@ -75,8 +75,9 @@
 }
 
 .cld-day.today .cld-number {
-    background: #0080FF;
-    color: #fff;
+    /*background: #0080FF;
+    color: #fff;*/
+    border:1px solid #0080FF;
 }
 
 .cld-day.disableDay {
@@ -150,5 +151,13 @@
     background-color: #ffb6c161;
 }
 /* Attendance Calendar */
+
+/* Event Details */
+.cld-number.eventNumber {
+    background-color: #0080FF;
+    color: white;
+    cursor: pointer;
+}
+/* Event Details */
 
 /* calander  */
